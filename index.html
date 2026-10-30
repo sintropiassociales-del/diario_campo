@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trazo · Sintropía Social</title>
+<meta name="description" content="Trazo: lectura textual de manuscritos, creación de tipografías a partir de tu caligrafía y esquemas hechos a mano convertidos en propuestas descargables.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --morado:#6B21F5; --morado-osc:#4c12b8; --morado-claro:#f1eafe; --naranja:#FF6B1A; --naranja-claro:#fff1e8;
+  --tinta:#1d1440; --gris:#6b6880; --linea:#e6e1f2; --fondo:#faf9fd; --blanco:#fff; --ok:#1f8a4c; --alerta:#c2410c;
+  --radio:10px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'Open Sans',Arial,sans-serif;color:var(--tinta);background:var(--fondo);font-size:15px;line-height:1.55}
+h1,h2,h3,.mont{font-family:'Montserrat',Arial,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding:0 22px}
+/* ---------- cabecera ---------- */
+header{background:var(--blanco);border-bottom:1px solid var(--linea)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;padding-top:18px;padding-bottom:16px;gap:16px;flex-wrap:wrap}
+.marca{display:flex;align-items:baseline;gap:14px}
+.marca .logo{font-family:'Montserrat';font-weight:800;font-size:30px;letter-spacing:-.5px;color:var(--morado)}
+.marca .por{font-size:12.5px;color:var(--gris);letter-spacing:.4px;text-transform:uppercase}
+.regla{display:flex;gap:5px;align-items:center;margin:10px 0 0}
+.regla i{display:block;height:3px;border-radius:2px}
+.regla i:nth-child(1){width:34px;background:var(--morado)}
+.regla i:nth-child(2){width:6px;background:var(--naranja)}
+.regla i:nth-child(3){width:34px;background:var(--morado)}
+nav.pasos{display:flex;gap:6px;font-size:13px}
+nav.pasos span{padding:6px 12px;border-radius:999px;color:var(--gris);border:1px solid var(--linea);background:var(--blanco)}
+nav.pasos span.on{background:var(--morado);border-color:var(--morado);color:#fff}
+/* ---------- tarjetas ---------- */
+.card{background:var(--blanco);border:1px solid var(--linea);border-radius:var(--radio);padding:22px}
+.sub{color:var(--gris);font-size:13.5px}
+.grid2{display:grid;grid-template-columns:1.35fr 1fr;gap:20px}
+@media (max-width:900px){.grid2{grid-template-columns:1fr}}
+section{padding:26px 0}
+h2{font-size:21px;margin:0 0 4px;font-weight:700}
+h3{font-size:15.5px;margin:0 0 6px;font-weight:700}
+/* ---------- carga ---------- */
+.drop{border:2px dashed #cfc4ef;border-radius:14px;padding:38px 20px;text-align:center;background:linear-gradient(180deg,#fff, #fbf9ff);cursor:pointer;transition:.15s}
+.drop:hover,.drop.over{border-color:var(--morado);background:var(--morado-claro)}
+.drop .big{font-family:'Montserrat';font-weight:700;font-size:19px;color:var(--morado)}
+.thumbs{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.thumbs canvas,.thumbs img{height:110px;width:auto;border:1px solid var(--linea);border-radius:6px;background:#fff}
+.modos{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.modos label{flex:1;min-width:150px;border:1px solid var(--linea);border-radius:10px;padding:10px 12px;cursor:pointer;background:#fff}
+.modos label b{display:block;font-family:'Montserrat';font-size:13.5px}
+.modos label small{color:var(--gris);font-size:12px}
+.modos input{position:absolute;opacity:0;pointer-events:none}
+.modos label.on{border-color:var(--morado);box-shadow:0 0 0 2px var(--morado-claro) inset;background:#fcfaff}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--morado);background:var(--morado);color:#fff;border-radius:8px;padding:9px 16px;font-weight:600;cursor:pointer;font-size:14px;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--morado-osc)}
+.btn.sec{background:#fff;color:var(--morado)}
+.btn.sec:hover{background:var(--morado-claro)}
+.btn.nar{background:var(--naranja);border-color:var(--naranja)}
+.btn.nar:hover{background:#e85a0c}
+.btn.mini{padding:5px 10px;font-size:12.5px;border-radius:6px}
+.btn.txt{border:none;background:none;color:var(--morado);padding:4px 6px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.fila{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.aviso{font-size:12.5px;color:var(--gris);border-left:3px solid var(--naranja);padding:6px 12px;background:var(--naranja-claro);border-radius:0 6px 6px 0}
+.aviso.morado{border-color:var(--morado);background:var(--morado-claro)}
+/* ---------- pestañas ---------- */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--linea);margin-bottom:18px;flex-wrap:wrap}
+.tabs button{border:none;background:none;padding:11px 18px;font-family:'Montserrat';font-weight:600;font-size:14px;color:var(--gris);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabs button.on{color:var(--morado);border-color:var(--morado)}
+.tabs button[hidden]{display:none}
+.panel[hidden]{display:none}
+/* ---------- texto ---------- */
+.paginas{display:flex;flex-direction:column;gap:12px;max-height:760px;overflow:auto;padding-right:4px}
+.pagwrap{position:relative;border:1px solid var(--linea);border-radius:8px;overflow:hidden;background:#fff}
+.pagwrap canvas{display:block;width:100%;height:auto}
+.pagwrap .marca-duda{position:absolute;border:2px solid var(--naranja);background:rgba(255,107,26,.12);border-radius:3px;pointer-events:none;transition:.15s}
+.pagwrap .marca-duda.activa{background:rgba(255,107,26,.35);box-shadow:0 0 0 3px rgba(255,107,26,.25)}
+.pagwrap .marca-duda.ok{border-color:var(--ok);background:rgba(31,138,76,.08)}
+.transcripcion{font-family:'Times New Roman',Times,serif;font-size:17px;line-height:1.7;white-space:pre-wrap;word-wrap:break-word;background:#fff;border:1px solid var(--linea);border-radius:8px;padding:18px 20px;min-height:260px;max-height:560px;overflow:auto}
+.transcripcion .pag-sep{display:block;font-family:'Open Sans';font-size:11.5px;color:var(--gris);letter-spacing:.5px;text-transform:uppercase;margin:12px 0 4px;border-top:1px dashed var(--linea);padding-top:8px}
+.duda{background:var(--naranja-claro);border-bottom:2px solid var(--naranja);padding:0 2px;border-radius:3px;cursor:pointer}
+.duda.ok{background:#e9f7ef;border-color:var(--ok)}
+textarea.editor{width:100%;min-height:420px;font-family:'Times New Roman',serif;font-size:17px;line-height:1.7;border:1px solid var(--morado);border-radius:8px;padding:16px;resize:vertical}
+.dudas{display:flex;flex-direction:column;gap:10px;margin:14px 0}
+.qcard{border:1px solid #f7cdb3;background:#fffaf6;border-radius:10px;padding:12px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center}
+.qcard.ok{border-color:#bfe3cd;background:#f6fcf8}
+.qcard img,.qcard canvas{max-width:230px;max-height:80px;border:1px solid var(--linea);border-radius:6px;background:#fff}
+.qcard .preg{font-weight:600;font-size:13.5px;margin-bottom:6px}
+.qcard input[type=text]{border:1px solid var(--linea);border-radius:6px;padding:5px 8px;width:150px}
+.chip{border:1px solid var(--linea);background:#fff;border-radius:999px;padding:3px 11px;cursor:pointer;font-size:13.5px}
+.chip:hover{border-color:var(--morado);color:var(--morado)}
+.export{border-top:1px solid var(--linea);margin-top:16px;padding-top:14px}
+.export h3{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--gris)}
+/* ---------- tipografía ---------- */
+.glifos-q{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.gq{border:1px solid #f7cdb3;background:#fffaf6;border-radius:10px;padding:10px;display:flex;gap:10px;align-items:center}
+.gq canvas{width:70px;height:70px;border:1px solid var(--linea);border-radius:6px;background:#fff;flex:none}
+.gq .ctrl{display:flex;flex-direction:column;gap:6px;min-width:0}
+.gq input{width:62px;border:1px solid var(--linea);border-radius:6px;padding:4px 6px;font-size:16px;text-align:center}
+.cobertura{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}
+.cel{border:1px solid var(--linea);border-radius:8px;background:#fff;cursor:pointer;position:relative;aspect-ratio:1/1.12;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.cel canvas{width:100%;height:auto;display:block}
+.cel .lbl{position:absolute;top:3px;left:5px;font-size:10.5px;color:var(--gris);font-weight:600}
+.cel .src{position:absolute;bottom:2px;right:4px;font-size:9px;color:var(--morado);text-transform:uppercase;letter-spacing:.3px}
+.cel.falta{background:repeating-linear-gradient(45deg,#fff,#fff 6px,#faf7ff 6px,#faf7ff 12px);border-style:dashed}
+.cel.falta .lbl{font-size:18px;color:#c9c0e3;position:static}
+.cel.falta .src{color:var(--naranja)}
+.cel.sel{outline:2px solid var(--naranja)}
+.leyenda-cob{display:flex;gap:16px;font-size:12px;color:var(--gris);flex-wrap:wrap;margin:8px 0 12px}
+.variantes{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.variantes canvas{width:64px;height:64px;border:2px solid var(--linea);border-radius:6px;cursor:pointer;background:#fff}
+.variantes canvas.on{border-color:var(--morado)}
+.muestra{font-size:44px;line-height:1.3;border:1px solid var(--linea);border-radius:10px;padding:16px 20px;background:#fff;min-height:120px;outline:none;word-wrap:break-word}
+.descargas{display:flex;gap:8px;flex-wrap:wrap}
+.stat{display:flex;gap:22px;flex-wrap:wrap;margin:8px 0 14px}
+.stat div{font-size:12.5px;color:var(--gris)}
+.stat b{display:block;font-family:'Montserrat';font-size:22px;color:var(--tinta)}
+details.inst{border:1px solid var(--linea);border-radius:8px;padding:10px 14px;background:#fff;margin-top:12px}
+details.inst summary{cursor:pointer;font-weight:600;font-family:'Montserrat';font-size:14px}
+details.inst li{margin:4px 0;font-size:13.5px}
+/* ---------- esquema ---------- */
+.esq-layout{display:grid;grid-template-columns:1fr 320px;gap:18px}
+@media (max-width:1000px){.esq-layout{grid-template-columns:1fr}}
+.lienzo{border:1px solid var(--linea);border-radius:10px;background:#fff;overflow:auto;max-height:780px}
+.lienzo svg{display:block;width:100%;height:auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.lienzo svg .nodo{cursor:grab}
+.lienzo svg .nodo:active{cursor:grabbing}
+.lado{display:flex;flex-direction:column;gap:12px}
+.lista-nodos{max-height:430px;overflow:auto;display:flex;flex-direction:column;gap:6px}
+.ln{display:grid;grid-template-columns:30px 1fr 84px;gap:6px;align-items:center}
+.ln input[type=color]{width:30px;height:30px;padding:0;border:1px solid var(--linea);border-radius:6px;background:none}
+.ln input[type=text]{border:1px solid var(--linea);border-radius:6px;padding:4px 7px;font-size:13px;min-width:0}
+.ln select{border:1px solid var(--linea);border-radius:6px;padding:4px;font-size:12px}
+.seg{display:inline-flex;border:1px solid var(--linea);border-radius:8px;overflow:hidden}
+.seg button{border:none;background:#fff;padding:6px 11px;font-size:12.5px;cursor:pointer;border-right:1px solid var(--linea)}
+.seg button:last-child{border-right:none}
+.seg button.on{background:var(--morado);color:#fff}
+.colores-det{display:flex;gap:6px;flex-wrap:wrap}
+.colores-det span{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--linea);border-radius:999px;padding:2px 10px 2px 3px;font-size:12.5px;background:#fff}
+.colores-det i{width:16px;height:16px;border-radius:50%;display:inline-block}
+label.chk{display:flex;gap:8px;align-items:center;font-size:13.5px;cursor:pointer}
+/* ---------- capa de espera, avisos, modal ---------- */
+#espera{position:fixed;inset:0;background:rgba(29,20,64,.55);display:none;align-items:center;justify-content:center;z-index:50}
+#espera.on{display:flex}
+#espera .caja{background:#fff;border-radius:14px;padding:26px 30px;min-width:300px;max-width:440px;text-align:center}
+#espera .barra{height:4px;background:var(--morado-claro);border-radius:4px;overflow:hidden;margin-top:16px}
+#espera .barra i{display:block;height:100%;width:35%;background:linear-gradient(90deg,var(--morado),var(--naranja));animation:ir 1.1s infinite ease-in-out;border-radius:4px}
+@keyframes ir{0%{transform:translateX(-110%)}100%{transform:translateX(320%)}}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--tinta);color:#fff;padding:12px 18px;border-radius:10px;font-size:14px;z-index:60;display:none;max-width:min(640px,92vw)}
+#toast.on{display:block}
+#toast.error{background:#8a1c1c}
+#toast a{color:#ffd2b8;font-weight:700}
+.modal{position:fixed;inset:0;background:rgba(29,20,64,.55);display:none;align-items:center;justify-content:center;z-index:40;padding:16px}
+.modal.on{display:flex}
+.modal .caja{background:#fff;border-radius:14px;padding:22px;max-width:520px;width:100%}
+.pad{position:relative;width:300px;height:340px;margin:12px auto;border:1px solid var(--linea);border-radius:8px;background:#fff;touch-action:none}
+.pad canvas{position:absolute;inset:0;width:100%;height:100%}
+footer{border-top:1px solid var(--linea);padding:22px 0 34px;color:var(--gris);font-size:12.5px;margin-top:20px;background:#fff}
+.oculto{display:none!important}
+.mt{margin-top:14px}.mt2{margin-top:22px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div>
+      <div class="marca"><span class="logo">Trazo</span><span class="por">Sintropía Social</span></div>
+      <div class="regla"><i></i><i></i><i></i></div>
+    </div>
+    <nav class="pasos" aria-label="Pasos">
+      <span id="p1" class="on">1 · Cargar</span><span id="p2">2 · Revisar</span><span id="p3">3 · Descargar</span>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- =============================== CARGA =============================== -->
+  <section id="sec-carga">
+    <div class="grid2">
+      <div class="card">
+        <h2>Lectura de manuscritos y esquemas</h2>
+        <p class="sub" style="margin-top:0">Sube una foto, un escaneo o un PDF con texto escrito a mano, caligrafía, esquemas o dibujos. Trazo devuelve la transcripción textual tal como viene, una tipografía con esa letra y, si es un esquema, una propuesta lista para descargar.</p>
+        <div class="drop" id="drop" tabindex="0" role="button" aria-label="Cargar archivo">
+          <div class="big">Arrastra aquí tu imagen o PDF</div>
+          <div class="sub">o haz clic para elegir · JPG, PNG, WebP o PDF · hasta 8 páginas</div>
+          <input type="file" id="archivo" accept="image/*,application/pdf" multiple hidden>
+        </div>
+        <div class="thumbs" id="thumbs"></div>
+        <div class="modos" id="modos">
+          <label class="on"><input type="radio" name="modo" value="auto" checked><b>Detectar automáticamente</b><small>Trazo decide si es texto, esquema o ambos</small></label>
+          <label><input type="radio" name="modo" value="texto"><b>Texto o caligrafía</b><small>Cartas, apuntes, notas, diarios</small></label>
+          <label><input type="radio" name="modo" value="esquema"><b>Esquema o dibujo</b><small>Mapas, diagramas, flujos, cuadros</small></label>
+        </div>
+        <div class="fila">
+          <button class="btn" id="btn-analizar" disabled>Analizar documento</button>
+          <span class="sub" id="estado-carga"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Tipografía con tu letra</h2>
+        <p class="sub" style="margin-top:0">Trazo arma la tipografía con las letras que encuentra en tu documento. Para tener el alfabeto completo (mayúsculas, acentos, números y signos), llena la plantilla a mano y súbela.</p>
+        <ol class="sub" style="padding-left:18px;margin:10px 0 14px">
+          <li>Descarga e imprime la plantilla (hoja carta).</li>
+          <li>Escribe un carácter por casilla con bolígrafo o plumón oscuro.</li>
+          <li>Toma una foto de frente o escanéala, con las 4 marcas negras visibles.</li>
+        </ol>
+        <div class="fila">
+          <button class="btn sec" id="btn-plantilla">Descargar plantilla (PDF)</button>
+          <button class="btn nar" id="btn-subir-plantilla">Subir plantilla llena</button>
+          <input type="file" id="archivo-plantilla" accept="image/*,application/pdf" hidden>
+        </div>
+        <p class="aviso morado mt">Las tipografías se generan en tu navegador: tu letra no sale de tu equipo. Puedes instalarlas en Canva, Word, Google Slides (vía Canva), Illustrator, Photoshop o en una página web.</p>
+      </div>
+    </div>
+    <p class="aviso mt2">Aviso de privacidad: Sintropía Social no conserva los archivos que subes. Las imágenes se envían una sola vez a un servicio de IA para su lectura y no se almacenan. Los documentos de Google Docs que generes se eliminan automáticamente a los 7 días; descarga una copia si la necesitas.</p>
+  </section>
+
+  <!-- ============================= RESULTADOS ============================= -->
+  <section id="sec-res" class="oculto">
+    <div class="fila" style="justify-content:space-between;margin-bottom:10px">
+      <div><h2 id="res-titulo">Resultado</h2><div class="sub" id="res-sub"></div></div>
+      <button class="btn sec" id="btn-nuevo">Analizar otro documento</button>
+    </div>
+    <div class="tabs" role="tablist">
+      <button data-tab="texto" class="on" id="tb-texto">Texto textual</button>
+      <button data-tab="tipo" id="tb-tipo">Tipografía</button>
+      <button data-tab="esquema" id="tb-esquema" hidden>Esquema</button>
+    </div>
+
+    <!-- ---------- TEXTO ---------- -->
+    <div class="panel" id="pn-texto">
+      <div class="grid2">
+        <div>
+          <h3>Original</h3>
+          <div class="paginas" id="paginas"></div>
+        </div>
+        <div>
+          <div class="fila" style="justify-content:space-between">
+            <h3 style="margin:0">Transcripción textual</h3>
+            <button class="btn txt" id="btn-editar">Editar texto</button>
+          </div>
+          <p class="sub" style="margin:2px 0 8px">Se respeta la ortografía, la puntuación y los saltos de línea del original.</p>
+          <div id="caja-dudas"></div>
+          <div class="transcripcion" id="transcripcion"></div>
+          <textarea class="editor oculto" id="editor"></textarea>
+          <div class="export">
+            <h3>Descargar transcripción</h3>
+            <div class="fila">
+              <button class="btn" data-exp-texto="pdf">PDF</button>
+              <button class="btn" data-exp-texto="docx">Word (.docx)</button>
+              <button class="btn" data-exp-texto="gdoc">Google Docs</button>
+              <button class="btn sec" data-exp-texto="txt">Texto (.txt)</button>
+              <button class="btn sec" data-exp-texto="copiar">Copiar</button>
+            </div>
+            <label class="chk mt" id="chk-mi-letra-wrap" title="Disponible al generar tu tipografía"><input type="checkbox" id="chk-mi-letra" disabled> Usar mi tipografía en el PDF y en Word</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- TIPOGRAFÍA ---------- -->
+    <div class="panel" id="pn-tipo" hidden>
+      <div id="tipo-inicio" class="card">
+        <h3>Crear una tipografía con la letra del documento</h3>
+        <p class="sub">Trazo separa cada letra, la compara con la transcripción y te pregunta solo las letras de las que no está seguro.</p>
+        <button class="btn" id="btn-preparar">Separar las letras</button>
+      </div>
+
+      <div id="tipo-trabajo" class="oculto">
+        <div class="stat" id="tipo-stat"></div>
+        <div id="tipo-preguntas"></div>
+
+        <div class="card mt">
+          <div class="fila" style="justify-content:space-between">
+            <h3 style="margin:0">Alfabeto de tu tipografía</h3>
+            <span class="sub">Haz clic en una casilla para elegir otra versión de la letra o dibujarla</span>
+          </div>
+          <div class="leyenda-cob">
+            <span><b style="color:var(--morado)">DOC</b> tomada del documento</span>
+            <span><b style="color:var(--morado)">PLANT</b> de la plantilla</span>
+            <span><b style="color:var(--morado)">DIB</b> dibujada aquí</span>
+            <span><b style="color:var(--naranja)">AUTO</b> se completará automáticamente</span>
+          </div>
+          <div class="cobertura" id="cobertura"></div>
+          <div id="variantes-box" class="mt oculto"></div>
+        </div>
+
+        <div class="card mt">
+          <h3>Generar tipografía</h3>
+          <div class="fila mt">
+            <label class="sub" for="nombre-fuente">Nombre</label>
+            <input type="text" id="nombre-fuente" value="Mi Caligrafia" maxlength="40" style="border:1px solid var(--linea);border-radius:8px;padding:8px 10px;width:240px">
+            <label class="chk"><input type="checkbox" id="chk-sintetizar" checked> Completar acentos, ñ, ¿ y ¡ si faltan</label>
+            <button class="btn nar" id="btn-generar">Generar tipografía</button>
+          </div>
+          <div id="fuente-lista" class="oculto mt2">
+            <div class="muestra" id="muestra" contenteditable="true" spellcheck="false">Escribe aquí para probar tu letra. Ñandú, ¿qué tal? 0123456789</div>
+            <div class="sub mt" id="fuente-reporte"></div>
+            <div class="descargas mt">
+              <button class="btn" data-font="ttf">TTF</button>
+              <button class="btn" data-font="otf">OTF</button>
+              <button class="btn" data-font="woff">WOFF</button>
+              <button class="btn" data-font="woff2">WOFF2</button>
+              <button class="btn sec" data-font="zip">Todo en un .zip</button>
+            </div>
+            <details class="inst">
+              <summary>¿Dónde instalo cada archivo?</summary>
+              <ul>
+                <li><b>Word, PowerPoint, Excel (Windows):</b> abre el archivo <b>TTF</b> y pulsa «Instalar». Reinicia Word.</li>
+                <li><b>Word y Pages (Mac):</b> abre el <b>OTF</b> o <b>TTF</b>; se instala en el Catálogo tipográfico.</li>
+                <li><b>Canva:</b> Marca › Tipografías de marca › Subir fuente (requiere Canva Pro, Teams o Educación). Acepta <b>OTF</b>, <b>TTF</b> y <b>WOFF</b>.</li>
+                <li><b>Google Docs:</b> no admite tipografías propias; usa la opción «Usar mi tipografía» al descargar el PDF.</li>
+                <li><b>Illustrator, Photoshop, Affinity, Figma (escritorio):</b> instala el <b>OTF</b> en tu sistema.</li>
+                <li><b>Sitios web:</b> sube el <b>WOFF2</b> (y el <b>WOFF</b> como respaldo) y decláralo con <code>@font-face</code>.</li>
+              </ul>
+            </details>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- ESQUEMA ---------- -->
+    <div class="panel" id="pn-esquema" hidden>
+      <div class="esq-layout">
+        <div>
+          <div class="fila" style="justify-content:space-between;margin-bottom:10px">
+            <div class="seg" id="seg-disp">
+              <button data-disp="original" class="on">Como el original</button>
+              <button data-disp="TB">Ordenado vertical</button>
+              <button data-disp="LR">Ordenado horizontal</button>
+            </div>
+            <label class="chk"><input type="checkbox" id="chk-dibujados" checked> Respetar colores dibujados</label>
+          </div>
+          <div class="lienzo" id="lienzo"><svg id="svg-esq" xmlns="http://www.w3.org/2000/svg"></svg></div>
+          <p class="sub" style="margin-top:6px">Arrastra los elementos para acomodarlos. Los cambios se reflejan en todas las descargas.</p>
+        </div>
+        <div class="lado">
+          <div class="card" style="padding:16px">
+            <h3>Título</h3>
+            <input type="text" id="esq-titulo" style="width:100%;border:1px solid var(--linea);border-radius:8px;padding:7px 10px">
+            <div id="esq-colores" class="mt"></div>
+          </div>
+          <div class="card" style="padding:16px">
+            <h3>Elementos</h3>
+            <div class="lista-nodos" id="lista-nodos"></div>
+          </div>
+          <div class="card" style="padding:16px">
+            <h3>Descargar propuesta</h3>
+            <div class="fila">
+              <button class="btn" data-exp-esq="pdf">PDF</button>
+              <button class="btn" data-exp-esq="png">PNG</button>
+              <button class="btn" data-exp-esq="html">HTML</button>
+              <button class="btn" data-exp-esq="docx">Word</button>
+              <button class="btn" data-exp-esq="gdoc">Google Docs</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">Trazo · una herramienta de Sintropía Social · <span id="anio"></span></div></footer>
+
+<div id="espera"><div class="caja"><div class="mont" style="font-weight:700;font-size:17px" id="espera-txt">Procesando…</div><div class="sub" id="espera-sub"></div><div class="barra"><i></i></div></div></div>
+<div id="toast"></div>
+
+<div class="modal" id="modal-dibujo">
+  <div class="caja">
+    <h3 id="dib-titulo">Dibuja la letra</h3>
+    <p class="sub" style="margin:0">Apoya la letra en la línea base (la más marcada). Las líneas guía no forman parte de la letra.</p>
+    <div class="pad" id="pad"><canvas id="pad-guia" width="600" height="680"></canvas><canvas id="pad-tinta" width="600" height="680"></canvas></div>
+    <div class="fila" style="justify-content:space-between">
+      <label class="sub">Grosor <input type="range" id="pad-grosor" min="6" max="40" value="16"></label>
+      <div class="fila">
+        <button class="btn sec mini" id="pad-limpiar">Limpiar</button>
+        <button class="btn sec mini" id="pad-cancelar">Cancelar</button>
+        <button class="btn mini" id="pad-guardar">Guardar letra</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="lib/trazo-fontlib.js"></script>
+<script src="lib/trazo-engine.js"></script>
+<script src="lib/jspdf.umd.min.js"></script>
+<script src="lib/docx.umd.js"></script>
+<script src="lib/dagre.min.js"></script>
+<script src="lib/jszip.min.js"></script>
+<script>
+/* =====================================================================
+   CONFIGURACIÓN
+   Pega aquí la URL /exec de la aplicación web de Apps Script (Code.gs)
+   ===================================================================== */
+const TRAZO_BACKEND = '';
+
+/* ===================================================================== */
+const T = TrazoEngine;
+const MAX_PAGINAS = 8;
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const BACKEND = (window.TRAZO_BACKEND_OVERRIDE || TRAZO_BACKEND || '').trim();
+
+const COLORES = {
+  rojo: '#E53935', roja: '#E53935', amarillo: '#FDD835', amarilla: '#FDD835', verde: '#43A047', azul: '#1E88E5',
+  naranja: '#FB8C00', anaranjado: '#FB8C00', morado: '#8E24AA', morada: '#8E24AA', violeta: '#7E57C2', rosa: '#EC407A', rosado: '#EC407A',
+  cafe: '#6D4C41', café: '#6D4C41', marron: '#6D4C41', marrón: '#6D4C41', gris: '#757575', negro: '#212121', negra: '#212121', blanco: '#FFFFFF',
+  celeste: '#29B6F6', turquesa: '#00ACC1', lila: '#B39DDB', dorado: '#C9A227', plateado: '#B0BEC5', fucsia: '#D81B60', magenta: '#D81B60',
+  'verde claro': '#9CCC65', 'verde oscuro': '#2E7D32', 'azul claro': '#64B5F6', 'azul marino': '#1A237E', 'azul oscuro': '#1A237E', vino: '#7B1F2E', beige: '#E8D9B5', crema: '#F5EBD0'
+};
+
+const st = {
+  nombre: 'documento', paginas: [], modo: 'auto', res: null, dudas: {}, editando: false,
+  segs: [], glifos: [], fuentes: new Map(), // fuentes: char -> {tipo, vec}
+  fuente: null, preparado: false, esq: null, disp: 'original', usarDibujados: true, celSel: null
+};
+const cliente = (() => { try { let c = localStorage.getItem('trazo_cliente'); if (!c) { c = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('trazo_cliente', c); } return c; } catch (e) { return 'anon'; } })();
+
+/* ---------------- utilidades de interfaz ---------------- */
+function espera(t, sub) { $('#espera-txt').textContent = t; $('#espera-sub').textContent = sub || ''; $('#espera').classList.add('on'); }
+function listo() { $('#espera').classList.remove('on'); }
+let toastT;
+function aviso(html, error, ms) {
+  const el = $('#toast'); el.innerHTML = html; el.classList.toggle('error', !!error); el.classList.add('on');
+  clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('on'), ms || (error ? 7000 : 4200));
+}
+function pasos(n) { ['#p1', '#p2', '#p3'].forEach((s, i) => $(s).classList.toggle('on', i === n - 1)); }
+const pausa = () => new Promise(r => setTimeout(r, 30));
+function guardar(blob, nombre) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nombre;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  pasos(3);
+}
+const slug = s => (s || 'trazo').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w-]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'trazo';
+function abToB64(ab) { const b = new Uint8Array(ab); let s = ''; for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s); }
+function canvasB64(c, max, tipo) {
+  tipo = tipo || 'image/jpeg';
+  let src = c;
+  const s = Math.min(1, (max || 2000) / Math.max(c.width, c.height));
+  if (s < 1) { src = document.createElement('canvas'); src.width = Math.round(c.width * s); src.height = Math.round(c.height * s); const x = src.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, src.width, src.height); x.drawImage(c, 0, 0, src.width, src.height); }
+  return src.toDataURL(tipo, 0.86).split(',')[1];
+}
+async function api(accion, datos) {
+  if (!BACKEND) throw new Error('La plataforma aún no está conectada a su servicio de IA (falta la URL del backend en TRAZO_BACKEND).');
+  const r = await fetch(BACKEND, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ accion, cliente, ...datos }) });
+  if (!r.ok) throw new Error('El servicio respondió con error ' + r.status + '.');
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error || 'Error desconocido.');
+  return j;
+}
+
+/* =====================================================================
+   CARGA DE ARCHIVOS
+   ===================================================================== */
+async function pdfAPaginas(file, max) {
+  const pdfjs = await import('./lib/pdf.min.mjs');
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL('./lib/pdf.worker.min.mjs', location.href).href;
+  const pdf = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
+  const n = Math.min(pdf.numPages, max), out = [];
+  for (let i = 1; i <= n; i++) {
+    const page = await pdf.getPage(i);
+    const v0 = page.getViewport({ scale: 1 }), s = Math.min(3.2, 2300 / Math.max(v0.width, v0.height));
+    const vp = page.getViewport({ scale: s });
+    const c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height);
+    const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+    await page.render({ canvasContext: ctx, viewport: vp }).promise;
+    out.push(c);
+  }
+  return { paginas: out, total: pdf.numPages };
+}
+async function archivoAPaginas(file, max) {
+  if (file.type === 'application/pdf' || /\.pdf$/i.test(file.name)) return pdfAPaginas(file, max);
+  const url = URL.createObjectURL(file);
+  try { const img = await T.loadImage(url); return { paginas: [T.imageToCanvas(img, 2400)], total: 1 }; }
+  catch (e) { throw new Error('No pude abrir «' + file.name + '». Usa JPG, PNG, WebP o PDF.'); }
+  finally { URL.revokeObjectURL(url); }
+}
+
+async function cargarArchivos(files) {
+  files = [...files]; if (!files.length) return;
+  espera('Abriendo el archivo…');
+  try {
+    st.paginas = []; let recorte = false;
+    for (const f of files) {
+      const r = await archivoAPaginas(f, MAX_PAGINAS - st.paginas.length);
+      st.paginas.push(...r.paginas); if (r.total > r.paginas.length) recorte = true;
+      if (st.paginas.length >= MAX_PAGINAS) { recorte = recorte || files.length > 1; break; }
+    }
+    st.nombre = files[0].name.replace(/\.[^.]+$/, '');
+    const th = $('#thumbs'); th.innerHTML = '';
+    st.paginas.forEach(c => { const im = document.createElement('img'); im.src = c.toDataURL('image/jpeg', 0.6); th.appendChild(im); });
+    $('#estado-carga').textContent = st.paginas.length + (st.paginas.length === 1 ? ' página lista' : ' páginas listas') + (recorte ? ' (se tomaron las primeras ' + MAX_PAGINAS + ')' : '');
+    $('#btn-analizar').disabled = !st.paginas.length;
+  } catch (e) { aviso(esc(e.message), true); }
+  listo();
+}
+
+const drop = $('#drop');
+drop.addEventListener('click', () => $('#archivo').click());
+drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') $('#archivo').click(); });
+$('#archivo').addEventListener('change', e => cargarArchivos(e.target.files));
+['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => cargarArchivos(e.dataTransfer.files));
+$$('#modos input').forEach(r => r.addEventListener('change', () => {
+  st.modo = r.value; $$('#modos label').forEach(l => l.classList.toggle('on', l.querySelector('input').checked));
+}));
+
+/* =====================================================================
+   ANÁLISIS
+   ===================================================================== */
+$('#btn-analizar').addEventListener('click', analizar);
+async function analizar() {
+  espera('Leyendo el documento…', 'La IA revisa letra por letra. Puede tardar hasta un minuto.');
+  try {
+    const imagenes = st.paginas.map(c => ({ mime: 'image/jpeg', data: canvasB64(c, 2000) }));
+    const j = await api('analizar', { imagenes, modo: st.modo, nombre: st.nombre });
+    st.res = normalizar(j.resultado);
+    reiniciarTipografia();
+    mostrarResultados();
+  } catch (e) { aviso(esc(e.message), true); }
+  listo();
+}
+
+function normalizar(r) {
+  r = r || {};
+  const paginas = (r.paginas || []).map(p => ({ lineas: (p.lineas || []).map(l => typeof l === 'string' ? { texto: l } : { texto: String(l.texto ?? ''), box_2d: l.box_2d }) }));
+  while (paginas.length < st.paginas.length) paginas.push({ lineas: [] });
+  st.dudas = {};
+  (r.dudas || []).forEach((d, i) => {
+    const id = String(d.id || ('d' + (i + 1)));
+    st.dudas[id] = { id, pagina: +d.pagina || 0, lectura: d.lectura || '', alternativas: (d.alternativas || []).filter(Boolean), motivo: d.motivo || '', box: d.box_2d, valor: d.lectura || '', resuelta: false };
+  });
+  // marcas en el texto sin registro de duda
+  paginas.forEach((p, pi) => p.lineas.forEach(l => {
+    l.texto.replace(/\{\{([^:}]+):([^}]*)\}\}/g, (m, id, v) => { if (!st.dudas[id]) st.dudas[id] = { id, pagina: pi, lectura: v, alternativas: [], motivo: v ? 'lectura dudosa' : 'ilegible', box: l.box_2d, valor: v, resuelta: false }; });
+  }));
+  // dudas sin marca en el texto: no se pueden ubicar, se descartan
+  const usadas = new Set(); paginas.forEach(p => p.lineas.forEach(l => l.texto.replace(/\{\{([^:}]+):/g, (m, id) => usadas.add(id))));
+  Object.keys(st.dudas).forEach(k => { if (!usadas.has(k)) delete st.dudas[k]; });
+  return { tipo: r.tipo || 'texto', manuscrito: r.es_manuscrito !== false, paginas, esquema: r.esquema && (r.esquema.nodos || []).length ? r.esquema : null, notas: r.notas || '' };
+}
+
+function mostrarResultados() {
+  $('#sec-carga').classList.add('oculto'); $('#sec-res').classList.remove('oculto'); pasos(2);
+  const tipos = { texto: 'Texto', esquema: 'Esquema', mixto: 'Texto y esquema' };
+  $('#res-titulo').textContent = st.nombre;
+  const nd = Object.keys(st.dudas).length;
+  $('#res-sub').textContent = (st.res ? (tipos[st.res.tipo] || 'Documento') + (st.res.manuscrito ? ' manuscrito' : ' impreso') + ' · ' + st.paginas.length + (st.paginas.length === 1 ? ' página' : ' páginas') + (nd ? ' · ' + nd + (nd === 1 ? ' duda' : ' dudas') + ' por resolver' : '') : 'Tipografía desde plantilla') + (st.res && st.res.notas ? ' · ' + st.res.notas : '');
+  $('#tb-texto').hidden = !st.res;
+  $('#tb-esquema').hidden = !(st.res && st.res.esquema);
+  if (st.res) { renderPaginas(); renderTexto(); }
+  if (st.res && st.res.esquema) iniciarEsquema(st.res.esquema);
+  irTab(st.res ? (st.res.tipo === 'esquema' && st.res.esquema ? 'esquema' : 'texto') : 'tipo');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+$$('.tabs button').forEach(b => b.addEventListener('click', () => irTab(b.dataset.tab)));
+function irTab(t) {
+  $$('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+  ['texto', 'tipo', 'esquema'].forEach(k => $('#pn-' + k).hidden = k !== t);
+  if (t === 'esquema') renderEsquema();
+}
+$('#btn-nuevo').addEventListener('click', () => {
+  $('#sec-res').classList.add('oculto'); $('#sec-carga').classList.remove('oculto'); pasos(1);
+  st.paginas = []; st.res = null; st.esq = null; $('#thumbs').innerHTML = ''; $('#estado-carga').textContent = ''; $('#btn-analizar').disabled = true; $('#archivo').value = '';
+});
+
+/* =====================================================================
+   TEXTO TEXTUAL Y DUDAS
+   ===================================================================== */
+function renderPaginas() {
+  const box = $('#paginas'); box.innerHTML = '';
+  st.paginas.forEach((c, i) => {
+    const w = document.createElement('div'); w.className = 'pagwrap'; w.dataset.p = i;
+    const cv = document.createElement('canvas'); cv.width = c.width; cv.height = c.height; cv.getContext('2d').drawImage(c, 0, 0);
+    w.appendChild(cv);
+    Object.values(st.dudas).filter(d => d.pagina === i && Array.isArray(d.box)).forEach(d => {
+      const m = document.createElement('div'); m.className = 'marca-duda' + (d.resuelta ? ' ok' : ''); m.dataset.id = d.id;
+      const [y0, x0, y1, x1] = d.box; Object.assign(m.style, { top: y0 / 10 + '%', left: x0 / 10 + '%', height: (y1 - y0) / 10 + '%', width: (x1 - x0) / 10 + '%' });
+      w.appendChild(m);
+    });
+    box.appendChild(w);
+  });
+}
+const valorDuda = (id, v) => { const d = st.dudas[id]; const x = d ? d.valor : v; return x === '' ? '[ilegible]' : x; };
+const lineaPlana = t => String(t).replace(/\{\{([^:}]+):([^}]*)\}\}/g, (m, id, v) => valorDuda(id, v));
+
+function renderTexto() {
+  const tr = $('#transcripcion');
+  let html = '';
+  st.res.paginas.forEach((p, i) => {
+    if (st.res.paginas.length > 1) html += `<span class="pag-sep">Página ${i + 1}</span>`;
+    html += p.lineas.map(l => esc(l.texto).replace(/\{\{([^:}]+):([^}]*)\}\}/g, (m, id, v) => {
+      const d = st.dudas[id];
+      return `<span class="duda${d && d.resuelta ? ' ok' : ''}" data-id="${esc(id)}" title="${d && d.resuelta ? 'Confirmada' : 'Lectura dudosa: haz clic para revisarla'}">${esc(valorDuda(id, v))}</span>`;
+    })).join('\n') + '\n';
+  });
+  tr.innerHTML = html.replace(/\n$/, '');
+  tr.querySelectorAll('.duda').forEach(s => s.addEventListener('click', () => enfocarDuda(s.dataset.id)));
+  renderDudas();
+}
+
+function recorteDuda(d) {
+  const c = st.paginas[d.pagina]; if (!c || !Array.isArray(d.box)) return null;
+  let [y0, x0, y1, x1] = d.box.map(v => v / 1000);
+  const ph = (y1 - y0) * 0.6, pw = (x1 - x0) * 0.25 + 0.01;
+  y0 = Math.max(0, y0 - ph); y1 = Math.min(1, y1 + ph); x0 = Math.max(0, x0 - pw); x1 = Math.min(1, x1 + pw);
+  const sw = (x1 - x0) * c.width, sh = (y1 - y0) * c.height; if (sw < 4 || sh < 4) return null;
+  const s = Math.min(3, 230 / sw, 80 / sh);
+  const o = document.createElement('canvas'); o.width = Math.round(sw * s); o.height = Math.round(sh * s);
+  o.getContext('2d').drawImage(c, x0 * c.width, y0 * c.height, sw, sh, 0, 0, o.width, o.height);
+  return o;
+}
+
+function renderDudas() {
+  const box = $('#caja-dudas'); box.innerHTML = '';
+  const ds = Object.values(st.dudas); if (!ds.length) return;
+  const pend = ds.filter(d => !d.resuelta).length;
+  const head = document.createElement('div');
+  head.className = 'aviso'; head.style.marginBottom = '8px';
+  head.innerHTML = pend ? `Tengo <b>${pend}</b> ${pend === 1 ? 'duda' : 'dudas'} sobre lo que dice el documento. Confírmalas para que el texto quede exacto.` : 'Todas las dudas están resueltas.';
+  box.appendChild(head);
+  const list = document.createElement('div'); list.className = 'dudas';
+  ds.forEach(d => {
+    const q = document.createElement('div'); q.className = 'qcard' + (d.resuelta ? ' ok' : ''); q.id = 'q-' + d.id;
+    const img = recorteDuda(d);
+    const izq = document.createElement('div'); if (img) izq.appendChild(img); else izq.innerHTML = '<span class="sub">sin recorte</span>';
+    const der = document.createElement('div');
+    const ops = [...new Set([d.lectura, ...d.alternativas].filter(Boolean))];
+    der.innerHTML = `<div class="preg">${d.resuelta ? 'Confirmado: «' + esc(d.valor || '[ilegible]') + '»' : (d.lectura ? '¿Aquí dice «' + esc(d.lectura) + '»?' : 'No logro leer esta parte. ¿Qué dice?')}</div>
+      <div class="fila">${ops.map(o => `<button class="chip" data-v="${esc(o)}">${esc(o)}</button>`).join('')}
+      <input type="text" placeholder="Otra lectura" value=""><button class="btn mini">Confirmar</button>
+      <button class="btn txt mini" data-ileg="1">Es ilegible</button></div>`;
+    der.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => resolverDuda(d.id, b.dataset.v)));
+    const inp = der.querySelector('input');
+    der.querySelector('.btn.mini:not(.txt)').addEventListener('click', () => { if (inp.value.trim()) resolverDuda(d.id, inp.value.trim()); else if (d.lectura) resolverDuda(d.id, d.lectura); });
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter' && inp.value.trim()) resolverDuda(d.id, inp.value.trim()); });
+    der.querySelector('[data-ileg]').addEventListener('click', () => resolverDuda(d.id, ''));
+    q.append(izq, der);
+    q.addEventListener('mouseenter', () => marcar(d.id, true)); q.addEventListener('mouseleave', () => marcar(d.id, false));
+    list.appendChild(q);
+  });
+  box.appendChild(list);
+}
+function marcar(id, on) { $$(`.marca-duda[data-id="${CSS.escape(id)}"]`).forEach(m => m.classList.toggle('activa', on)); }
+function enfocarDuda(id) {
+  const q = document.getElementById('q-' + id); if (q) { q.scrollIntoView({ behavior: 'smooth', block: 'center' }); q.querySelector('input')?.focus(); }
+  const m = $(`.marca-duda[data-id="${CSS.escape(id)}"]`); if (m) { m.scrollIntoView({ behavior: 'smooth', block: 'center' }); marcar(id, true); setTimeout(() => marcar(id, false), 1600); }
+}
+function resolverDuda(id, v) {
+  const d = st.dudas[id]; if (!d) return;
+  d.valor = v; d.resuelta = true;
+  renderTexto(); renderPaginas();
+  if (st.preparado) aviso('Texto actualizado. Si cambió una palabra, vuelve a «Separar las letras» para que la tipografía la tome en cuenta.');
+}
+
+$('#btn-editar').addEventListener('click', () => {
+  st.editando = !st.editando;
+  if (st.editando) { $('#editor').value = textoFinal(true); }
+  $('#editor').classList.toggle('oculto', !st.editando); $('#transcripcion').classList.toggle('oculto', st.editando);
+  $('#caja-dudas').classList.toggle('oculto', st.editando);
+  $('#btn-editar').textContent = st.editando ? 'Ver con dudas marcadas' : 'Editar texto';
+  if (!st.editando) aviso('Tus ediciones se conservan en las descargas mientras el editor tenga texto. Para volver al texto original recarga el análisis.');
+});
+let textoEditado = null;
+$('#editor').addEventListener('input', e => { textoEditado = e.target.value; });
+function textoFinal(ignorarEdicion) {
+  if (!ignorarEdicion && textoEditado !== null) return textoEditado;
+  if (!st.res) return '';
+  const multi = st.res.paginas.length > 1;
+  return st.res.paginas.map((p, i) => (multi ? `[Página ${i + 1}]\n` : '') + p.lineas.map(l => lineaPlana(l.texto)).join('\n')).join('\n\n');
+}
+
+/* ---------------- exportaciones de texto ---------------- */
+$$('[data-exp-texto]').forEach(b => b.addEventListener('click', () => exportarTexto(b.dataset.expTexto).catch(e => { listo(); aviso(esc(e.message), true); })));
+async function exportarTexto(fmt) {
+  const pend = Object.values(st.dudas).filter(d => !d.resuelta).length;
+  if (pend && fmt !== 'copiar' && !confirm(`Quedan ${pend} dudas sin confirmar. Se usará la lectura más probable. ¿Continuar?`)) return;
+  const txt = textoFinal(), base = slug(st.nombre) + '-transcripcion';
+  const miLetra = $('#chk-mi-letra').checked && st.fuente;
+  if (fmt === 'copiar') { await navigator.clipboard.writeText(txt); aviso('Texto copiado al portapapeles.'); return; }
+  if (fmt === 'txt') return guardar(new Blob([txt], { type: 'text/plain;charset=utf-8' }), base + '.txt');
+  if (fmt === 'pdf') return guardar(pdfTexto(txt, miLetra), base + '.pdf');
+  if (fmt === 'docx') { espera('Preparando Word…'); const b = await docxTexto(txt, miLetra); listo(); return guardar(b, base + '.docx'); }
+  if (fmt === 'gdoc') {
+    espera('Creando el documento en Google Docs…');
+    const j = await api('crearDoc', { tipo: 'texto', titulo: st.nombre + ' · transcripción textual', lineas: txt.split('\n') });
+    listo(); pasos(3);
+    aviso(`Documento listo: <a href="${esc(j.url)}" target="_blank" rel="noopener">abrir en Google Docs</a>. Se elimina en ${j.dias || 7} días; usa Archivo › Hacer una copia para conservarlo.`, false, 15000);
+  }
+}
+function fecha() { return new Date().toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' }); }
+function pdfTexto(txt, miLetra) {
+  const { jsPDF } = window.jspdf; const doc = new jsPDF({ unit: 'mm', format: 'letter' });
+  const W = 215.9, M = 22; let y = 24;
+  doc.setFillColor(107, 33, 245); doc.rect(0, 0, W, 6, 'F'); doc.setFillColor(255, 107, 26); doc.rect(W - 46, 0, 46, 6, 'F');
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(15); doc.setTextColor(29, 20, 64); doc.text('Transcripción textual', M, y); y += 6;
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(110, 104, 128);
+  doc.text(`${st.nombre}  ·  ${fecha()}  ·  Trazo · Sintropía Social`, M, y); y += 4;
+  doc.setDrawColor(107, 33, 245); doc.setLineWidth(0.6); doc.line(M, y, M + 22, y); doc.setDrawColor(255, 107, 26); doc.line(M + 24, y, M + 27, y); doc.setDrawColor(107, 33, 245); doc.line(M + 29, y, M + 51, y); y += 9;
+  let fam = 'times', size = 11.5, lh = 6;
+  if (miLetra) { doc.addFileToVFS('mi-letra.ttf', abToB64(st.fuente.ttf)); doc.addFont('mi-letra.ttf', 'MiLetra', 'normal'); fam = 'MiLetra'; size = 15; lh = 8; }
+  doc.setFont(fam, 'normal'); doc.setFontSize(size); doc.setTextColor(20, 20, 20);
+  if (!miLetra) {
+    for (const linea of txt.split('\n')) {
+      const partes = linea ? doc.splitTextToSize(linea, W - M * 2) : [''];
+      for (const p of partes) { if (y > 262) { doc.addPage(); y = 24; } doc.text(p, M, y); y += lh; }
+    }
+  } else {
+    // los caracteres que tu letra aún no tiene se escriben en Times para no perder texto
+    const tiene = new Set([' ', ...st.fuente.report.included, ...st.fuente.report.synthesized]);
+    const tramos = s => { const out = []; for (const ch of s) { const f = tiene.has(ch) ? 'MiLetra' : 'times'; if (out.length && out[out.length - 1].f === f) out[out.length - 1].t += ch; else out.push({ f, t: ch }); } return out; };
+    const ancho = s => tramos(s).reduce((a, r) => { doc.setFont(r.f, 'normal'); doc.setFontSize(r.f === 'times' ? 12 : size); return a + doc.getTextWidth(r.t); }, 0);
+    const escribir = (s, x) => tramos(s).forEach(r => { doc.setFont(r.f, 'normal'); doc.setFontSize(r.f === 'times' ? 12 : size); doc.text(r.t, x, y); x += doc.getTextWidth(r.t); });
+    for (const linea of txt.split('\n')) {
+      const pal = linea.split(' '); let cur = '';
+      const salto = () => { if (y > 262) { doc.addPage(); y = 24; } escribir(cur, M); y += lh; cur = ''; };
+      pal.forEach(p => { const t = cur ? cur + ' ' + p : p; if (cur && ancho(t) > W - M * 2) { salto(); cur = p; } else cur = t; });
+      salto();
+    }
+  }
+  const n = doc.getNumberOfPages();
+  for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(150, 150, 150); doc.text(`Trazo · Sintropía Social  ·  ${i} / ${n}`, W / 2, 272, { align: 'center' }); }
+  return doc.output('blob');
+}
+async function docxTexto(txt, miLetra) {
+  const D = window.docx, fuente = miLetra ? st.fuente.family : 'Times New Roman';
+  const parrafos = [
+    new D.Paragraph({ children: [new D.TextRun({ text: 'Transcripción textual', bold: true, size: 32, font: 'Montserrat', color: '6B21F5' })], spacing: { after: 80 } }),
+    new D.Paragraph({ children: [new D.TextRun({ text: `${st.nombre} · ${fecha()} · Trazo · Sintropía Social`, size: 18, color: '777777', font: 'Open Sans' })], spacing: { after: 320 } }),
+    ...txt.split('\n').map(l => new D.Paragraph({ children: [new D.TextRun({ text: l, font: fuente, size: miLetra ? 30 : 24 })], spacing: { after: 40 } }))
+  ];
+  const doc = new D.Document({ creator: 'Trazo · Sintropía Social', title: st.nombre, sections: [{ properties: {}, children: parrafos }] });
+  return D.Packer.toBlob(doc);
+}
+
+/* =====================================================================
+   TIPOGRAFÍA
+   ===================================================================== */
+function reiniciarTipografia() {
+  st.segs = []; st.glifos = []; st.preparado = false; st.fuente = null; st.celSel = null;
+  // se conservan las letras de plantilla y dibujadas
+  $('#tipo-inicio').classList.remove('oculto');
+  $('#tipo-trabajo').classList.toggle('oculto', !st.fuentes.size);
+  $('#fuente-lista').classList.add('oculto');
+  $('#chk-mi-letra').disabled = true; $('#chk-mi-letra').checked = false;
+  if (st.fuentes.size) renderTipo();
+}
+$('#btn-preparar').addEventListener('click', () => prepararLetras().catch(e => { listo(); aviso(esc(e.message), true); }));
+
+async function prepararLetras() {
+  espera('Separando las letras…', 'Ubico cada carácter y lo comparo con la transcripción.');
+  await pausa();
+  st.segs = []; st.glifos = [];
+  st.paginas.forEach((c, pi) => {
+    const lineas = (st.res && st.res.paginas[pi] ? st.res.paginas[pi].lineas : []);
+    const boxes = lineas.filter(l => Array.isArray(l.box_2d) && l.box_2d.length === 4).map(l => ({
+      y0: l.box_2d[0] / 1000 * c.height, x0: l.box_2d[1] / 1000 * c.width, y1: l.box_2d[2] / 1000 * c.height, x1: l.box_2d[3] / 1000 * c.width,
+      texto: lineaPlana(l.texto).replace(/\[ilegible\]/g, ' ')
+    }));
+    const seg = T.segmentPage(c, { lineBoxes: boxes });
+    T.alignLines(seg);
+    seg.glyphs.forEach(g => { g.page = pi; g.seg = seg; g.key = pi + ':' + g.id; });
+    st.segs.push(seg); st.glifos.push(...seg.glyphs);
+  });
+  // la IA identifica las letras que no se pudieron alinear
+  const pend = st.glifos.filter(g => !g.label);
+  if (pend.length && BACKEND) {
+    const lote = pend.slice(0, 192);
+    for (let i = 0; i < lote.length; i += 64) {
+      const parte = lote.slice(i, i + 64);
+      espera('Identificando letras…', `Grupo ${i / 64 + 1} de ${Math.ceil(lote.length / 64)}`);
+      const hoja = T.contactSheet(parte[0].seg, parte, 8);
+      try {
+        const j = await api('etiquetarGlifos', { imagen: { mime: 'image/png', data: canvasB64(hoja, 1400, 'image/png') }, total: parte.length, pista: textoFinal().slice(0, 2500) });
+        (j.glifos || []).forEach(r => {
+          const g = parte[(+r.n) - 1]; if (!g || r.caracter == null) return;
+          g.label = String(r.caracter); g.conf = Math.max(0, Math.min(1, +r.confianza || 0.5)); g.alts = (r.alternativas || []).map(String); g.source = 'IA';
+        });
+      } catch (e) { aviso('No pude consultar a la IA para algunas letras: ' + esc(e.message), true); break; }
+    }
+  }
+  st.glifos.forEach(g => { if (g.label && [...g.label].length > 1) g.excluded = true; if (g.label === '∅') g.excluded = true; });
+  st.segs.forEach(s => T.lineMetrics(s));
+  st.preparado = true;
+  listo();
+  $('#tipo-inicio').classList.add('oculto'); $('#tipo-trabajo').classList.remove('oculto');
+  renderTipo();
+}
+
+function seguroCubierto() {
+  const set = new Set();
+  st.glifos.forEach(g => { if (g.label && !g.excluded && g.conf >= 0.75) set.add(g.label); });
+  st.fuentes.forEach((v, k) => set.add(k));
+  return set;
+}
+function preguntasGlifos() {
+  const cub = seguroCubierto();
+  const vistos = new Set(), out = [];
+  for (const g of st.glifos) {
+    if (g.excluded || g.descartado) continue;
+    const dudosa = !g.label || g.conf < 0.75;
+    if (!dudosa) continue;
+    if (g.label && cub.has(g.label) && !(g.alts || []).some(a => !cub.has(a))) continue; // ya tenemos esa letra
+    const k = (g.label || '?') + '|' + Math.round(g.w / 4) + '|' + Math.round(g.h / 4);
+    if (vistos.has(k)) continue; vistos.add(k);
+    out.push(g);
+    if (out.length >= 36) break;
+  }
+  return out;
+}
+
+function vecDe(ch) {
+  const f = st.fuentes.get(ch); if (f) return { vec: f.vec, tipo: f.tipo };
+  if (!st.preparado) return null;
+  const { chosen } = T.pickInstances(st.glifos.filter(g => !g.descartado));
+  const g = chosen.get(ch); if (!g) return null;
+  if (!g.vec) { try { g.vec = T.glyphFromFree(g.seg, g); } catch (e) { g.vec = null; } }
+  return g.vec ? { vec: g.vec, tipo: 'doc', g } : null;
+}
+
+function renderTipo() {
+  if (st.fuente) { st.fuente = null; $('#fuente-lista').classList.add('oculto'); $('#chk-mi-letra').checked = false; $('#chk-mi-letra').disabled = true; }
+  const qs = st.preparado ? preguntasGlifos() : [];
+  const libres = st.glifos.filter(g => g.label && !g.excluded && !g.descartado);
+  const dist = new Set([...libres.map(g => g.label), ...st.fuentes.keys()]);
+  const ligadas = st.glifos.filter(g => g.excluded && g.label && g.label !== '∅').length;
+  $('#tipo-stat').innerHTML = `
+    <div><b>${st.glifos.length}</b>trazos encontrados</div>
+    <div><b>${dist.size}</b>caracteres distintos</div>
+    <div><b>${T.CHARSET.filter(c => !dist.has(c)).length}</b>faltan del alfabeto</div>
+    ${st.fuentes.size ? `<div><b>${st.fuentes.size}</b>de plantilla o dibujadas</div>` : ''}
+    ${ligadas ? `<div><b>${ligadas}</b>letras ligadas (cursiva) omitidas</div>` : ''}`;
+  // preguntas
+  const qb = $('#tipo-preguntas'); qb.innerHTML = '';
+  if (qs.length) {
+    qb.innerHTML = `<div class="aviso" style="margin-bottom:10px">Tengo dudas sobre <b>${qs.length}</b> ${qs.length === 1 ? 'trazo' : 'trazos'}. Dime qué carácter es cada uno; así la tipografía queda fiel a tu letra.</div>`;
+    const grid = document.createElement('div'); grid.className = 'glifos-q';
+    qs.forEach(g => {
+      const c = document.createElement('div'); c.className = 'gq';
+      const cv = T.glyphCanvas(g.seg, g, 140);
+      const ctrl = document.createElement('div'); ctrl.className = 'ctrl';
+      const ops = [...new Set([g.label, ...(g.alts || [])].filter(x => x && x !== '∅'))].slice(0, 4);
+      ctrl.innerHTML = `<div style="font-size:13px;font-weight:600">¿Qué letra es?</div>
+        <div class="fila" style="gap:5px">${ops.map(o => `<button class="chip" data-v="${esc(o)}">${esc(o)}</button>`).join('')}</div>
+        <div class="fila" style="gap:5px"><input type="text" maxlength="2" placeholder="…"><button class="btn mini">Listo</button><button class="btn txt mini" data-no="1">No es letra</button></div>`;
+      const set = v => { g.label = v; g.conf = 1; g.source = 'usuario'; g.vec = null; g.excluded = [...v].length !== 1; T.lineMetrics(g.seg); limpiarVec(g.seg); renderTipo(); };
+      ctrl.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => set(b.dataset.v)));
+      const inp = ctrl.querySelector('input');
+      ctrl.querySelector('.btn.mini:not(.txt)').addEventListener('click', () => inp.value.trim() && set(inp.value.trim()));
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter' && inp.value.trim()) set(inp.value.trim()); });
+      ctrl.querySelector('[data-no]').addEventListener('click', () => { g.descartado = true; renderTipo(); });
+      c.append(cv, ctrl); grid.appendChild(c);
+    });
+    qb.appendChild(grid);
+  } else if (st.preparado) {
+    qb.innerHTML = `<div class="aviso morado">No tengo dudas pendientes sobre las letras del documento.${ligadas ? ' Hay letras ligadas (escritura cursiva) que no se pueden separar con precisión: para incluirlas, usa la plantilla o dibújalas abajo.' : ''}</div>`;
+  }
+  renderCobertura();
+}
+function limpiarVec(seg) { st.glifos.forEach(g => { if (g.seg === seg) g.vec = null; }); }
+
+function renderCobertura() {
+  const box = $('#cobertura'); box.innerHTML = '';
+  const extra = [...new Set(st.glifos.filter(g => g.label && !g.excluded && !g.descartado && !T.CHARSET.includes(g.label)).map(g => g.label))];
+  const sint = $('#chk-sintetizar').checked;
+  const presentes = new Set();
+  const todos = [...T.CHARSET, ...extra];
+  const vs = new Map(); todos.forEach(ch => { const v = vecDe(ch); if (v) { vs.set(ch, v); presentes.add(ch); } });
+  todos.forEach(ch => {
+    const v = vs.get(ch);
+    const cel = document.createElement('div'); cel.className = 'cel' + (v ? '' : ' falta') + (st.celSel === ch ? ' sel' : ''); cel.title = ch;
+    if (v) {
+      const cv = document.createElement('canvas'); cv.width = 128; cv.height = 144; T.drawGlyph(cv, v.vec);
+      cel.innerHTML = `<span class="lbl">${esc(ch)}</span>`; cel.appendChild(cv);
+      cel.insertAdjacentHTML('beforeend', `<span class="src">${{ doc: 'doc', plantilla: 'plant', dibujo: 'dib' }[v.tipo] || ''}</span>`);
+    } else {
+      const comp = T.COMPOSE[ch], auto = sint && ((comp && presentes.has(comp[0])) || (ch === '¿' && presentes.has('?')) || (ch === '¡' && presentes.has('!')));
+      cel.innerHTML = `<span class="lbl">${esc(ch)}</span><span class="src">${auto ? 'auto' : 'dibujar'}</span>`;
+    }
+    cel.addEventListener('click', () => { st.celSel = ch; v ? mostrarVariantes(ch) : abrirDibujo(ch); renderCobertura(); });
+    box.appendChild(cel);
+  });
+}
+
+function mostrarVariantes(ch) {
+  const box = $('#variantes-box'); box.classList.remove('oculto');
+  const insts = st.glifos.filter(g => g.label === ch && !g.excluded && !g.descartado);
+  const f = st.fuentes.get(ch);
+  const elegido = T.pickInstances(st.glifos.filter(g => !g.descartado)).chosen.get(ch);
+  box.innerHTML = `<div class="fila" style="justify-content:space-between"><h3 style="margin:0">Letra «${esc(ch)}»</h3>
+    <div class="fila"><button class="btn sec mini" id="v-dibujar">Dibujarla</button>${f ? '<button class="btn sec mini" id="v-quitar">Quitar versión ' + (f.tipo === 'dibujo' ? 'dibujada' : 'de plantilla') + '</button>' : ''}<button class="btn txt mini" id="v-cerrar">Cerrar</button></div></div>
+    <p class="sub" style="margin:4px 0">${f ? 'Se usa la versión ' + (f.tipo === 'dibujo' ? 'dibujada' : 'de la plantilla') + '.' : ''} ${insts.length ? 'Versiones encontradas en el documento (elige la que prefieras):' : ''}</p>`;
+  const row = document.createElement('div'); row.className = 'variantes';
+  insts.slice(0, 40).forEach(g => {
+    const cv = T.glyphCanvas(g.seg, g, 128); if (!f && elegido === g) cv.classList.add('on');
+    cv.title = 'Usar esta versión';
+    cv.addEventListener('click', () => { insts.forEach(x => x.chosen = false); g.chosen = true; if (f) st.fuentes.delete(ch); mostrarVariantes(ch); renderCobertura(); });
+    row.appendChild(cv);
+  });
+  box.appendChild(row);
+  $('#v-dibujar').onclick = () => abrirDibujo(ch);
+  $('#v-cerrar').onclick = () => { box.classList.add('oculto'); st.celSel = null; renderCobertura(); };
+  if (f) $('#v-quitar').onclick = () => { st.fuentes.delete(ch); mostrarVariantes(ch); renderTipo(); };
+}
+
+/* ---------------- lienzo para dibujar letras ---------------- */
+let padChar = null, trazando = false;
+const PADG = { cap: 0.18, x: 0.44, base: 0.70 };
+function abrirDibujo(ch) {
+  padChar = ch; $('#dib-titulo').textContent = 'Dibuja «' + ch + '»';
+  const g = $('#pad-guia'), x = g.getContext('2d'); x.clearRect(0, 0, 600, 680);
+  x.font = '600 26px Open Sans'; x.fillStyle = '#c9c0e3'; x.fillText(ch, 14, 36);
+  [['cap', '#e3dcf5'], ['x', '#e3dcf5'], ['base', '#b9a9ea']].forEach(([k, c]) => { x.strokeStyle = c; x.lineWidth = k === 'base' ? 3 : 2; x.setLineDash(k === 'base' ? [] : [10, 8]); x.beginPath(); x.moveTo(0, 680 * PADG[k]); x.lineTo(600, 680 * PADG[k]); x.stroke(); });
+  limpiarPad(); $('#modal-dibujo').classList.add('on');
+}
+function limpiarPad() { const c = $('#pad-tinta').getContext('2d'); c.clearRect(0, 0, 600, 680); }
+(() => {
+  const c = $('#pad-tinta'), ctx = c.getContext('2d');
+  const pos = e => { const r = c.getBoundingClientRect(); return [(e.clientX - r.left) * 600 / r.width, (e.clientY - r.top) * 680 / r.height]; };
+  c.addEventListener('pointerdown', e => { trazando = true; c.setPointerCapture(e.pointerId); const [x, y] = pos(e); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#111'; ctx.lineWidth = +$('#pad-grosor').value; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 0.1, y); ctx.stroke(); });
+  c.addEventListener('pointermove', e => { if (!trazando) return; const [x, y] = pos(e); ctx.lineTo(x, y); ctx.stroke(); });
+  ['pointerup', 'pointercancel'].forEach(ev => c.addEventListener(ev, () => trazando = false));
+})();
+$('#pad-limpiar').onclick = limpiarPad;
+$('#pad-cancelar').onclick = () => $('#modal-dibujo').classList.remove('on');
+$('#pad-guardar').onclick = () => {
+  const src = $('#pad-tinta'), c = document.createElement('canvas'); c.width = 600; c.height = 680;
+  const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, 600, 680); x.drawImage(src, 0, 0);
+  const g = T.glyphFromDrawing(c, { cap: 680 * PADG.cap, base: 680 * PADG.base });
+  if (!g) { aviso('No encontré trazos. Dibuja la letra dentro del recuadro.', true); return; }
+  st.fuentes.set(padChar, { tipo: 'dibujo', vec: g });
+  $('#modal-dibujo').classList.remove('on');
+  $('#tipo-trabajo').classList.remove('oculto');
+  if (st.celSel) mostrarVariantes(padChar);
+  renderTipo();
+};
+
+/* ---------------- plantilla ---------------- */
+$('#btn-plantilla').addEventListener('click', () => { guardar(T.templatePDF(window.jspdf.jsPDF).output('blob'), 'trazo-plantilla-caligrafia.pdf'); });
+$('#btn-subir-plantilla').addEventListener('click', () => $('#archivo-plantilla').click());
+$('#archivo-plantilla').addEventListener('change', async e => {
+  const f = e.target.files[0]; if (!f) return; e.target.value = '';
+  espera('Leyendo tu plantilla…', 'Ubico las marcas de las esquinas y cada casilla.');
+  await pausa();
+  try {
+    const { paginas } = await archivoAPaginas(f, 1);
+    const r = T.readTemplate(paginas[0]);
+    r.glyphs.forEach((vec, ch) => st.fuentes.set(ch, { tipo: 'plantilla', vec }));
+    listo();
+    if (!st.res) { st.nombre = 'Tipografía desde plantilla'; }
+    mostrarResultados();
+    $('#tipo-trabajo').classList.remove('oculto');
+    if (!st.res) $('#tipo-inicio').classList.add('oculto');
+    renderTipo(); irTab('tipo');
+    aviso(`Leí <b>${r.glyphs.size}</b> de ${T.CHARSET.length} casillas.` + (r.empties.length ? ' Vacías: ' + esc(r.empties.join(' ')) : ''), false, 8000);
+  } catch (err) { listo(); aviso(esc(err.message), true); }
+});
+
+/* ---------------- generar tipografía ---------------- */
+$('#chk-sintetizar').addEventListener('change', renderCobertura);
+$('#btn-generar').addEventListener('click', () => generarFuente().catch(e => { listo(); aviso('No se pudo generar la tipografía: ' + esc(e.message), true); }));
+async function generarFuente() {
+  espera('Construyendo tu tipografía…', 'Vectorizo cada letra y armo los archivos TTF, OTF, WOFF y WOFF2.');
+  await pausa();
+  const mapa = new Map();
+  const extra = st.glifos.filter(g => g.label && !g.excluded && !g.descartado).map(g => g.label);
+  for (const ch of new Set([...T.CHARSET, ...extra, ...st.fuentes.keys()])) { const v = vecDe(ch); if (v) mapa.set(ch, v.vec); }
+  if (!mapa.size) { listo(); aviso('Todavía no hay letras para la tipografía.', true); return; }
+  // espacio entre palabras medido en el documento
+  const gaps = []; st.segs.forEach(s => s.lines.forEach(L => (L.wordGaps || []).forEach(gp => L.scale && gaps.push(gp * L.scale))));
+  const espacio = gaps.length ? Math.max(180, Math.min(460, T.median(gaps))) : 300;
+  const nombre = $('#nombre-fuente').value.trim() || 'Mi Caligrafia';
+  const f = await T.buildFont(mapa, { family: nombre, synthesize: $('#chk-sintetizar').checked, spaceWidth: espacio, wasmUrl: new URL('lib/woff2.wasm', location.href).href });
+  st.fuente = f;
+  const ff = new FontFace('TrazoVista', f.woff2.slice(0));
+  await ff.load(); document.fonts.add(ff);
+  $('#muestra').style.fontFamily = 'TrazoVista, serif';
+  $('#fuente-lista').classList.remove('oculto');
+  const rep = f.report;
+  $('#fuente-reporte').innerHTML = `<b>${rep.included.length}</b> caracteres incluidos` +
+    (rep.synthesized.length ? ` · completados automáticamente: ${esc(rep.synthesized.join(' '))}` : '') +
+    (rep.missing.length ? ` · aún faltan: <span style="color:var(--alerta)">${esc(rep.missing.join(' '))}</span> (puedes dibujarlos o usar la plantilla)` : ' · alfabeto completo');
+  $('#chk-mi-letra').disabled = false;
+  listo(); pasos(3);
+  $('#fuente-lista').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+$$('[data-font]').forEach(b => b.addEventListener('click', async () => {
+  if (!st.fuente) return;
+  const f = st.fuente, base = slug(f.family), k = b.dataset.font;
+  const tipos = { ttf: 'font/ttf', otf: 'font/otf', woff: 'font/woff', woff2: 'font/woff2' };
+  if (k !== 'zip') return guardar(new Blob([f[k]], { type: tipos[k] }), `${base}.${k}`);
+  const z = new JSZip();
+  ['ttf', 'otf', 'woff', 'woff2'].forEach(t => z.file(`${base}.${t}`, f[t]));
+  z.file('LEEME.txt', [
+    `Tipografía «${f.family}» generada con Trazo · Sintropía Social`, '',
+    `${base}.ttf   -> Word, PowerPoint y Excel en Windows (doble clic › Instalar)`,
+    `${base}.otf   -> Mac (Catálogo tipográfico), Illustrator, Photoshop, Canva`,
+    `${base}.woff  -> Canva o sitios web (respaldo)`,
+    `${base}.woff2 -> sitios web (@font-face)`, '',
+    '@font-face {', `  font-family: '${f.family}';`, `  src: url('${base}.woff2') format('woff2'), url('${base}.woff') format('woff');`, '}'
+  ].join('\r\n'));
+  guardar(await z.generateAsync({ type: 'blob' }), `${base}-tipografia.zip`);
+}));
+
+/* =====================================================================
+   ESQUEMA
+   ===================================================================== */
+const FORMAS = { rect: 'Rectángulo', redondeado: 'Redondeado', ovalo: 'Óvalo', circulo: 'Círculo', rombo: 'Rombo', nota: 'Nota', nube: 'Nube', texto: 'Solo texto' };
+function colorDe(c) {
+  if (!c) return null;
+  if (typeof c === 'string') { if (/^#?[0-9a-f]{6}$/i.test(c)) return (c[0] === '#' ? c : '#' + c).toUpperCase(); return COLORES[c.toLowerCase().trim()] || null; }
+  const p = c.palabra ? COLORES[String(c.palabra).toLowerCase().trim()] : null;
+  return p || colorDe(c.hex);
+}
+function iniciarEsquema(e) {
+  const pag = st.paginas[0];
+  st.esq = {
+    titulo: e.titulo || '', aspect: pag ? pag.height / pag.width : 0.75,
+    nodos: (e.nodos || []).map((n, i) => ({
+      id: String(n.id || 'n' + i), texto: String(n.texto || ''), forma: FORMAS[n.forma] ? n.forma : 'redondeado',
+      x: num(n.x, 0.5), y: num(n.y, 0.1 + i * 0.08), pagina: +n.pagina || 0, nivel: +n.nivel || 0,
+      cm: colorDe(n.color_mencionado), palabra: n.color_mencionado && (n.color_mencionado.palabra || (typeof n.color_mencionado === 'string' ? n.color_mencionado : '')) || '',
+      cd: colorDe(n.color_dibujado), cu: null
+    })),
+    conexiones: (e.conexiones || []).map(c => ({ de: String(c.de), a: String(c.a), etiqueta: c.etiqueta || '', estilo: c.estilo === 'punteada' ? 'punteada' : 'solida', dir: ['->', '<->', '--'].includes(c.direccion) ? c.direccion : '->', color: colorDe(c.color_mencionado) })),
+    leyenda: (e.leyenda || []).map(l => ({ palabra: l.palabra || '', hex: colorDe(l.hex) || colorDe(l.palabra), significado: l.significado || '' })).filter(l => l.hex)
+  };
+  const ids = new Set(st.esq.nodos.map(n => n.id));
+  st.esq.conexiones = st.esq.conexiones.filter(c => ids.has(c.de) && ids.has(c.a));
+  st.disp = 'original';
+  $$('#seg-disp button').forEach(b => b.classList.toggle('on', b.dataset.disp === st.disp));
+  $('#esq-titulo').value = st.esq.titulo;
+  st.esqLayout = true;
+  renderLadoEsquema();
+}
+const num = (v, d) => (typeof v === 'number' && isFinite(v) ? Math.max(0, Math.min(1, v)) : d);
+
+$$('#seg-disp button').forEach(b => b.addEventListener('click', () => { st.disp = b.dataset.disp; $$('#seg-disp button').forEach(x => x.classList.toggle('on', x === b)); st.esqLayout = true; renderEsquema(); }));
+$('#chk-dibujados').addEventListener('change', e => { st.usarDibujados = e.target.checked; renderEsquema(); renderLadoEsquema(); });
+$('#esq-titulo').addEventListener('input', e => { st.esq.titulo = e.target.value; renderEsquema(); });
+
+function relleno(n) {
+  if (n.cu) return n.cu; if (n.cm) return n.cm; if (st.usarDibujados && n.cd) return n.cd;
+  if (n.forma === 'texto') return '#FFFFFF';
+  return n.nivel === 0 ? '#6B21F5' : n.nivel === 1 ? '#FF6B1A' : '#F1EAFE';
+}
+function lum(hex) { const h = hex.replace('#', ''); const [r, g, b] = [0, 2, 4].map(i => parseInt(h.substr(i, 2), 16) / 255).map(c => c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)); return 0.2126 * r + 0.7152 * g + 0.0722 * b; }
+function oscurecer(hex, f) { const h = hex.replace('#', ''); return '#' + [0, 2, 4].map(i => Math.round(parseInt(h.substr(i, 2), 16) * f).toString(16).padStart(2, '0')).join(''); }
+const tintaSobre = hex => lum(hex) > 0.38 ? '#1d1440' : '#FFFFFF';
+
+const medidor = document.createElement('canvas').getContext('2d');
+function envolver(texto, fuente, maxW) {
+  medidor.font = fuente; const out = [];
+  String(texto).split('\n').forEach(par => {
+    const pal = par.split(/\s+/).filter(Boolean); let l = '';
+    pal.forEach(p => { const t = l ? l + ' ' + p : p; if (medidor.measureText(t).width > maxW && l) { out.push(l); l = p; } else l = t; });
+    out.push(l);
+  });
+  return out.length ? out : [''];
+}
+function medirNodo(n) {
+  const raiz = n.nivel === 0;
+  n.fs = raiz ? 16 : 14; n.ff = raiz ? 'Montserrat' : 'Open Sans'; n.fw = raiz ? 700 : 600;
+  const fuente = `${n.fw} ${n.fs}px ${n.ff}`;
+  n.lineas = envolver(n.texto || ' ', fuente, raiz ? 230 : 200);
+  medidor.font = fuente;
+  const tw = Math.max(...n.lineas.map(l => medidor.measureText(l).width));
+  let w = Math.max(90, tw + 32), h = n.lineas.length * n.fs * 1.32 + 22;
+  if (n.forma === 'ovalo' || n.forma === 'nube') { w *= 1.22; h *= 1.3; }
+  if (n.forma === 'rombo') { w *= 1.55; h *= 1.65; }
+  if (n.forma === 'circulo') { w = h = Math.max(w, h) * 1.1; }
+  n.w = Math.round(w); n.h = Math.round(h);
+}
+function maquetar() {
+  const S = st.esq; S.nodos.forEach(medirNodo);
+  if (st.disp === 'original') {
+    const W = 1150, H = W * S.aspect;
+    S.nodos.forEach(n => { n.px = n.x * W; n.py = (n.y + n.pagina) * H; });
+    // separa elementos que se encimen
+    for (let it = 0; it < 120; it++) {
+      let mov = false;
+      for (let i = 0; i < S.nodos.length; i++) for (let j = i + 1; j < S.nodos.length; j++) {
+        const a = S.nodos[i], b = S.nodos[j];
+        const ox = (a.w + b.w) / 2 + 18 - Math.abs(a.px - b.px), oy = (a.h + b.h) / 2 + 18 - Math.abs(a.py - b.py);
+        if (ox > 0 && oy > 0) {
+          mov = true;
+          if (ox < oy) { const s = (a.px <= b.px ? -1 : 1) * ox / 2; a.px += s; b.px -= s; }
+          else { const s = (a.py <= b.py ? -1 : 1) * oy / 2; a.py += s; b.py -= s; }
+        }
+      }
+      if (!mov) break;
+    }
+  } else {
+    const g = new dagre.graphlib.Graph(); g.setGraph({ rankdir: st.disp, nodesep: 36, ranksep: 70, marginx: 20, marginy: 20 }); g.setDefaultEdgeLabel(() => ({}));
+    S.nodos.forEach(n => g.setNode(n.id, { width: n.w, height: n.h }));
+    S.conexiones.forEach(c => g.setEdge(c.de, c.a));
+    dagre.layout(g);
+    S.nodos.forEach(n => { const p = g.node(n.id); n.px = p.x; n.py = p.y; });
+  }
+  st.esqLayout = false;
+}
+function borde(n, dx, dy) {
+  const hw = n.w / 2, hh = n.h / 2; if (!dx && !dy) return [n.px, n.py];
+  let t;
+  if (['ovalo', 'circulo', 'nube'].includes(n.forma)) t = 1 / Math.sqrt((dx / hw) ** 2 + (dy / hh) ** 2);
+  else if (n.forma === 'rombo') t = 1 / (Math.abs(dx) / hw + Math.abs(dy) / hh);
+  else t = Math.min(dx ? hw / Math.abs(dx) : Infinity, dy ? hh / Math.abs(dy) : Infinity);
+  return [n.px + dx * t, n.py + dy * t];
+}
+function formaSVG(n, f, s) {
+  const x = n.px - n.w / 2, y = n.py - n.h / 2, w = n.w, h = n.h, a = `fill="${f}" stroke="${s}" stroke-width="1.6"`;
+  switch (n.forma) {
+    case 'rect': return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" ${a}/>`;
+    case 'ovalo': case 'circulo': return `<ellipse cx="${n.px}" cy="${n.py}" rx="${w / 2}" ry="${h / 2}" ${a}/>`;
+    case 'nube': return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${h / 2}" ${a} stroke-dasharray="2 3"/>`;
+    case 'rombo': return `<polygon points="${n.px},${y} ${x + w},${n.py} ${n.px},${y + h} ${x},${n.py}" ${a}/>`;
+    case 'nota': return `<path d="M${x} ${y}h${w - 16}l16 16v${h - 16}h${-w}z" ${a}/><path d="M${x + w - 16} ${y}v16h16" fill="none" stroke="${s}" stroke-width="1.2"/>`;
+    case 'texto': return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="transparent" stroke="none"/>`;
+    default: return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" ${a}/>`;
+  }
+}
+function svgEsquema() {
+  const S = st.esq; if (st.esqLayout) maquetar();
+  let minx = 1e9, miny = 1e9, maxx = -1e9, maxy = -1e9;
+  S.nodos.forEach(n => { minx = Math.min(minx, n.px - n.w / 2); maxx = Math.max(maxx, n.px + n.w / 2); miny = Math.min(miny, n.py - n.h / 2); maxy = Math.max(maxy, n.py + n.h / 2); });
+  if (!S.nodos.length) { minx = miny = 0; maxx = 600; maxy = 300; }
+  const pad = 40, top = S.titulo ? 64 : 0, ley = S.leyenda.length ? 30 + Math.ceil(S.leyenda.length / 3) * 24 : 0;
+  const vx = minx - pad, vy = miny - pad - top, vw = Math.max(420, maxx - minx + pad * 2), vh = maxy - miny + pad * 2 + top + ley;
+  const colores = new Set(['#4a4560', ...S.conexiones.map(c => c.color).filter(Boolean)]);
+  const mid = c => 'f' + c.replace('#', '');
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vx} ${vy} ${vw} ${vh}" width="${Math.round(vw)}" height="${Math.round(vh)}" font-family="'Open Sans', Arial, Helvetica, sans-serif">`;
+  s += `<defs>${[...colores].map(c => `<marker id="${mid(c)}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${c}"/></marker>`).join('')}</defs>`;
+  s += `<rect x="${vx}" y="${vy}" width="${vw}" height="${vh}" fill="#ffffff"/>`;
+  if (S.titulo) {
+    s += `<text x="${vx + pad}" y="${vy + 38}" font-family="Montserrat, Arial, sans-serif" font-weight="700" font-size="22" fill="#1d1440">${esc(S.titulo)}</text>`;
+    s += `<rect x="${vx + pad}" y="${vy + 48}" width="34" height="3" rx="1.5" fill="#6B21F5"/><rect x="${vx + pad + 39}" y="${vy + 48}" width="6" height="3" rx="1.5" fill="#FF6B1A"/><rect x="${vx + pad + 50}" y="${vy + 48}" width="34" height="3" rx="1.5" fill="#6B21F5"/>`;
+  }
+  const byId = Object.fromEntries(S.nodos.map(n => [n.id, n]));
+  S.conexiones.forEach(c => {
+    const a = byId[c.de], b = byId[c.a]; if (!a || !b) return;
+    const dx = b.px - a.px, dy = b.py - a.py;
+    const [x1, y1] = borde(a, dx, dy), [x2, y2] = borde(b, -dx, -dy);
+    const col = c.color || '#4a4560';
+    const me = c.dir !== '--' ? `marker-end="url(#${mid(col)})"` : '', ms = c.dir === '<->' ? `marker-start="url(#${mid(col)})"` : '';
+    s += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="1.8" ${c.estilo === 'punteada' ? 'stroke-dasharray="6 5"' : ''} ${me} ${ms}/>`;
+    if (c.etiqueta) {
+      medidor.font = '500 12px Open Sans'; const tw = medidor.measureText(c.etiqueta).width + 10;
+      const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+      s += `<rect x="${mx - tw / 2}" y="${my - 10}" width="${tw}" height="19" rx="4" fill="#ffffff" stroke="#e6e1f2"/><text x="${mx}" y="${my + 4}" text-anchor="middle" font-size="12" font-weight="500" fill="#4a4560">${esc(c.etiqueta)}</text>`;
+    }
+  });
+  S.nodos.forEach(n => {
+    const f = relleno(n), sc = n.forma === 'texto' ? 'none' : oscurecer(f === '#FFFFFF' ? '#d8d2ea' : f, 0.82), tc = n.forma === 'texto' ? '#1d1440' : tintaSobre(f);
+    const lh = n.fs * 1.32, y0 = n.py - (n.lineas.length - 1) * lh / 2 + n.fs * 0.36;
+    s += `<g class="nodo" data-id="${esc(n.id)}">${formaSVG(n, f, sc)}<text text-anchor="middle" font-family="${n.ff}, Arial, sans-serif" font-weight="${n.fw}" font-size="${n.fs}" fill="${tc}">` +
+      n.lineas.map((l, i) => `<tspan x="${n.px}" y="${y0 + i * lh}">${esc(l)}</tspan>`).join('') + `</text></g>`;
+  });
+  if (S.leyenda.length) {
+    const ly = maxy + pad;
+    s += `<text x="${vx + pad}" y="${ly + 4}" font-size="12" font-weight="700" fill="#6b6880">CLAVE DE COLORES</text>`;
+    S.leyenda.forEach((l, i) => {
+      const cx = vx + pad + (i % 3) * 230, cy = ly + 22 + Math.floor(i / 3) * 24;
+      s += `<rect x="${cx}" y="${cy - 11}" width="14" height="14" rx="3" fill="${l.hex}"/><text x="${cx + 20}" y="${cy}" font-size="12.5" fill="#1d1440">${esc(l.palabra)}${l.significado ? ': ' + esc(l.significado) : ''}</text>`;
+    });
+  }
+  return s + '</svg>';
+}
+function renderEsquema() { if (!st.esq) return; $('#lienzo').innerHTML = svgEsquema(); }
+// arrastre fluido: se reconstruye y se conserva el nodo tomado
+(function () {
+  let tomado = null, off = null;
+  const cont = $('#lienzo');
+  const pt = (svg, e) => { const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); };
+  cont.addEventListener('pointerdown', e => {
+    const g = e.target.closest('.nodo'); if (!g || !st.esq) return;
+    const svg = cont.querySelector('svg'); const n = st.esq.nodos.find(x => x.id === g.dataset.id); const p = pt(svg, e);
+    tomado = n; off = [p.x - n.px, p.y - n.py]; cont.setPointerCapture(e.pointerId); e.preventDefault(); e.stopImmediatePropagation();
+  }, true);
+  cont.addEventListener('pointermove', e => {
+    if (!tomado) return; const svg = cont.querySelector('svg'); const p = pt(svg, e);
+    tomado.px = p.x - off[0]; tomado.py = p.y - off[1];
+    const vb = svg.getAttribute('viewBox');
+    let html = svgEsquema(); html = html.replace(/viewBox="[^"]+"/, `viewBox="${vb}"`); // mantiene el encuadre mientras se arrastra
+    cont.innerHTML = html;
+  }, true);
+  const soltar = () => { if (tomado) { tomado = null; cont.innerHTML = svgEsquema(); } };
+  cont.addEventListener('pointerup', soltar, true); cont.addEventListener('pointercancel', soltar, true);
+})();
+
+function renderLadoEsquema() {
+  const S = st.esq; if (!S) return;
+  const det = new Map(); S.nodos.forEach(n => { if (n.cm) det.set(n.cm, n.palabra || 'color escrito'); });
+  S.leyenda.forEach(l => det.set(l.hex, l.palabra + (l.significado ? ' = ' + l.significado : '')));
+  $('#esq-colores').innerHTML = det.size ? `<div class="sub" style="margin-bottom:6px">Colores indicados en el esquema (se aplican tal cual):</div><div class="colores-det">${[...det].map(([h, p]) => `<span><i style="background:${h}"></i>${esc(p)}</span>`).join('')}</div>` : '<div class="sub">El esquema no menciona colores; se usa la paleta de Sintropía Social. Puedes cambiar cualquier color abajo.</div>';
+  const box = $('#lista-nodos'); box.innerHTML = '';
+  S.nodos.forEach(n => {
+    const r = document.createElement('div'); r.className = 'ln';
+    r.innerHTML = `<input type="color" value="${relleno(n)}" title="Color"><input type="text" value="${esc(n.texto)}"><select>${Object.entries(FORMAS).map(([k, v]) => `<option value="${k}" ${k === n.forma ? 'selected' : ''}>${v}</option>`).join('')}</select>`;
+    const [c, t, f] = r.children;
+    c.addEventListener('input', () => { n.cu = c.value.toUpperCase(); renderEsquema(); });
+    t.addEventListener('input', () => { n.texto = t.value; medirNodo(n); renderEsquema(); });
+    f.addEventListener('change', () => { n.forma = f.value; medirNodo(n); renderEsquema(); });
+    box.appendChild(r);
+  });
+}
+
+/* ---------------- exportaciones del esquema ---------------- */
+$$('[data-exp-esq]').forEach(b => b.addEventListener('click', () => exportarEsquema(b.dataset.expEsq).catch(e => { listo(); aviso(esc(e.message), true); })));
+function svgABlob(svgTxt) { return new Blob([svgTxt], { type: 'image/svg+xml;charset=utf-8' }); }
+async function svgACanvas(svgTxt, escala) {
+  const m = svgTxt.match(/width="(\d+)" height="(\d+)"/); const w = +m[1], h = +m[2];
+  const url = URL.createObjectURL(svgABlob(svgTxt));
+  try {
+    const img = await T.loadImage(url);
+    const c = document.createElement('canvas'); c.width = Math.round(w * escala); c.height = Math.round(h * escala);
+    const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(img, 0, 0, c.width, c.height);
+    return c;
+  } finally { URL.revokeObjectURL(url); }
+}
+function textoRelaciones() {
+  const byId = Object.fromEntries(st.esq.nodos.map(n => [n.id, n]));
+  return st.esq.conexiones.map(c => `${byId[c.de].texto} ${c.dir === '<->' ? '↔' : c.dir === '--' ? '—' : '→'} ${byId[c.a].texto}${c.etiqueta ? ' (' + c.etiqueta + ')' : ''}`);
+}
+async function exportarEsquema(fmt) {
+  const svg = svgEsquema(), base = slug(st.esq.titulo || st.nombre) + '-esquema';
+  if (fmt === 'png') { const c = await svgACanvas(svg, 2.5); return c.toBlob(b => guardar(b, base + '.png'), 'image/png'); }
+  if (fmt === 'html') {
+    const t = esc(st.esq.titulo || st.nombre);
+    const html = `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${t}</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>body{margin:0;font-family:'Open Sans',Arial,sans-serif;background:#faf9fd;color:#1d1440}main{max-width:1200px;margin:0 auto;padding:28px 20px}figure{margin:0;background:#fff;border:1px solid #e6e1f2;border-radius:12px;overflow:auto}svg{display:block;width:100%;height:auto}h2{font-family:Montserrat,Arial;font-size:16px;margin:26px 0 8px}li{margin:3px 0}footer{color:#6b6880;font-size:12px;margin-top:26px}</style></head>
+<body><main><figure>${svg}</figure>
+<h2>Elementos</h2><ul>${st.esq.nodos.map(n => `<li>${esc(n.texto)}</li>`).join('')}</ul>
+${st.esq.conexiones.length ? `<h2>Relaciones</h2><ul>${textoRelaciones().map(r => `<li>${esc(r)}</li>`).join('')}</ul>` : ''}
+<footer>Propuesta generada con Trazo · Sintropía Social · ${esc(fecha())}</footer></main></body></html>`;
+    return guardar(new Blob([html], { type: 'text/html;charset=utf-8' }), base + '.html');
+  }
+  espera('Preparando la propuesta…');
+  const c = await svgACanvas(svg, 2.5);
+  if (fmt === 'pdf') {
+    const { jsPDF } = window.jspdf; const land = c.width > c.height;
+    const doc = new jsPDF({ unit: 'mm', format: 'letter', orientation: land ? 'landscape' : 'portrait' });
+    const W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight(), M = 12;
+    doc.setFillColor(107, 33, 245); doc.rect(0, 0, W, 4, 'F'); doc.setFillColor(255, 107, 26); doc.rect(W - 40, 0, 40, 4, 'F');
+    const s = Math.min((W - M * 2) / c.width, (H - M * 2 - 8) / c.height);
+    doc.addImage(c.toDataURL('image/png'), 'PNG', (W - c.width * s) / 2, M + 2, c.width * s, c.height * s, undefined, 'FAST');
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(150, 150, 150); doc.text('Trazo · Sintropía Social', W / 2, H - 6, { align: 'center' });
+    // segunda página con el contenido en texto
+    doc.addPage('letter', 'portrait'); let y = 22; const PW = doc.internal.pageSize.getWidth();
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(13); doc.setTextColor(29, 20, 64); doc.text(st.esq.titulo || 'Contenido del esquema', 20, y); y += 9;
+    const bloque = (tit, items) => { if (!items.length) return; doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); doc.setTextColor(255, 107, 26); doc.text(tit, 20, y); y += 6; doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(30, 30, 30); items.forEach(it => doc.splitTextToSize('•  ' + it.replace(/[→↔—]/g, m => ({ '→': '->', '↔': '<->', '—': '--' }[m])), PW - 40).forEach(l => { if (y > 262) { doc.addPage(); y = 20; } doc.text(l, 22, y); y += 5.2; })); y += 4; };
+    bloque('Elementos', st.esq.nodos.map(n => n.texto)); bloque('Relaciones', textoRelaciones());
+    listo(); return guardar(doc.output('blob'), base + '.pdf');
+  }
+  if (fmt === 'docx') {
+    const D = window.docx; const png = await new Promise(r => c.toBlob(r, 'image/png')); const buf = await png.arrayBuffer();
+    const maxW = 620, w = Math.min(maxW, c.width / 2.5), h = w * c.height / c.width;
+    const hd = t => new D.Paragraph({ children: [new D.TextRun({ text: t, bold: true, color: 'FF6B1A', font: 'Montserrat', size: 24 })], spacing: { before: 240, after: 80 } });
+    const li = t => new D.Paragraph({ children: [new D.TextRun({ text: t, font: 'Open Sans', size: 21 })], bullet: { level: 0 } });
+    const doc = new D.Document({ creator: 'Trazo · Sintropía Social', sections: [{ children: [
+      new D.Paragraph({ children: [new D.TextRun({ text: st.esq.titulo || st.nombre, bold: true, size: 32, font: 'Montserrat', color: '6B21F5' })], spacing: { after: 200 } }),
+      new D.Paragraph({ children: [new D.ImageRun({ type: 'png', data: buf, transformation: { width: Math.round(w), height: Math.round(h) } })] }),
+      hd('Elementos'), ...st.esq.nodos.map(n => li(n.texto)),
+      ...(st.esq.conexiones.length ? [hd('Relaciones'), ...textoRelaciones().map(li)] : [])
+    ] }] });
+    const b = await D.Packer.toBlob(doc); listo(); return guardar(b, base + '.docx');
+  }
+  if (fmt === 'gdoc') {
+    espera('Creando el documento en Google Docs…');
+    const j = await api('crearDoc', { tipo: 'esquema', titulo: st.esq.titulo || st.nombre, imagen: canvasB64(c, 2000, 'image/png'), esquema: { nodos: st.esq.nodos.map(n => ({ texto: n.texto })), conexiones: textoRelaciones() } });
+    listo(); pasos(3);
+    aviso(`Documento listo: <a href="${esc(j.url)}" target="_blank" rel="noopener">abrir en Google Docs</a>. Se elimina en ${j.dias || 7} días; usa Archivo › Hacer una copia para conservarlo.`, false, 15000);
+  }
+}
+
+/* ---------------- inicio ---------------- */
+$('#anio').textContent = new Date().getFullYear();
+if (!BACKEND) {
+  $('#estado-carga').innerHTML = '<span style="color:var(--alerta)">Falta conectar el servicio de IA (TRAZO_BACKEND). La plantilla de tipografía sí funciona.</span>';
+}
+</script>
+</body>
+</html>
