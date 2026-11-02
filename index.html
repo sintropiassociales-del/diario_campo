@@ -158,6 +158,16 @@ label.chk{display:flex;gap:8px;align-items:center;font-size:13.5px;cursor:pointe
 .modal .caja{background:#fff;border-radius:14px;padding:22px;max-width:520px;width:100%}
 .pad{position:relative;width:300px;height:340px;margin:12px auto;border:1px solid var(--linea);border-radius:8px;background:#fff;touch-action:none}
 .pad canvas{position:absolute;inset:0;width:100%;height:100%}
+/* ---------- donaciones ---------- */
+.donar{background:linear-gradient(135deg,#f6f0ff 0%,#fff 55%,#fff4ec 100%);border:1px solid var(--linea);border-radius:14px;padding:28px;display:grid;grid-template-columns:1.6fr 1fr;gap:26px;align-items:center}
+@media (max-width:820px){.donar{grid-template-columns:1fr}}
+.donar h2{font-size:22px;margin-bottom:6px}
+.donar p{margin:0 0 10px;font-size:14.5px}
+.donar .cierre{font-weight:600;color:var(--morado)}
+.donar .accion{background:#fff;border:1px solid var(--linea);border-radius:12px;padding:20px;text-align:center}
+.donar .accion .monto{font-family:'Montserrat';font-weight:700;font-size:15px;margin-bottom:12px}
+.btn-paypal{width:100%;padding:13px 18px;font-size:15.5px;border-radius:10px}
+.donar .nota{font-size:11.5px;color:var(--gris);margin-top:10px;line-height:1.45}
 footer{border-top:1px solid var(--linea);padding:22px 0 34px;color:var(--gris);font-size:12.5px;margin-top:20px;background:#fff}
 .oculto{display:none!important}
 .mt{margin-top:14px}.mt2{margin-top:22px}
@@ -366,6 +376,26 @@ footer{border-top:1px solid var(--linea);padding:22px 0 34px;color:var(--gris);f
   </section>
 </main>
 
+<section class="wrap" id="donar" aria-labelledby="donar-titulo">
+  <div class="donar">
+    <div>
+      <h2 id="donar-titulo">Apoya este proyecto</h2>
+      <div class="regla" style="margin:0 0 14px"><i></i><i></i><i></i></div>
+      <p>En Sintropía Social creemos que el conocimiento, la tecnología y la investigación deben estar al alcance de más personas. Por eso desarrollamos recursos y herramientas que facilitan el aprendizaje, el trabajo colaborativo y la recuperación del conocimiento.</p>
+      <p>Tu donación, sin importar su cantidad, nos ayuda a mantener estos proyectos, crear nuevas soluciones y reconocer el trabajo de las personas que están detrás de cada desarrollo. Puedes contribuir desde un peso hasta la cantidad que desees.</p>
+      <p class="cierre">No estás solamente haciendo una donación: estás ayudando a que más ideas se conviertan en herramientas útiles para todos.</p>
+    </div>
+    <div class="accion">
+      <div class="monto">Desde $1 hasta lo que desees</div>
+      <form action="https://www.paypal.com/donate" method="post" target="_blank" rel="noopener">
+        <input type="hidden" name="hosted_button_id" value="2D9KLAZYLYBZW">
+        <button type="submit" class="btn nar btn-paypal" title="Donar de forma segura con PayPal">Donar con PayPal</button>
+      </form>
+      <div class="nota">Se abre PayPal en una pestaña nueva, así no pierdes tu trabajo en Trazo. Puedes pagar con tu cuenta PayPal o con tarjeta de débito o crédito.</div>
+    </div>
+  </div>
+</section>
+
 <footer><div class="wrap">Trazo · una herramienta de Sintropía Social · <span id="anio"></span></div></footer>
 
 <div id="espera"><div class="caja"><div class="mont" style="font-weight:700;font-size:17px" id="espera-txt">Procesando…</div><div class="sub" id="espera-sub"></div><div class="barra"><i></i></div></div></div>
@@ -398,7 +428,7 @@ footer{border-top:1px solid var(--linea);padding:22px 0 34px;color:var(--gris);f
    CONFIGURACIÓN
    Pega aquí la URL /exec de la aplicación web de Apps Script (Code.gs)
    ===================================================================== */
-const TRAZO_BACKEND = 'https://script.google.com/macros/s/AKfycbyMXM3A4ZiHz5zyowj-85M_T8dBEG36XYMO-mxL0KC2UnH5coNPiUyQl8yOtpIZfiSy-Q/exec';
+const TRAZO_BACKEND = '';
 
 /* ===================================================================== */
 const T = TrazoEngine;
